@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".javaClasses.FormBActivity"
+    android:id="@+id/formb_layout">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+            <LinearLayout
+                android:id="@+id/formb_no_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/seize_formb_no_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="Form B No"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:background="@android:color/transparent"
+                    android:editable="false"/>
+
+                <EditText
+                    android:id="@+id/seize_formb_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_edit_text2"
+                    android:hint="Enter Form #"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+                //for date
+
+                <LinearLayout
+                    android:id="@+id/input_date_seize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/formb_date_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Date"
+                        android:textColor="@color/colorPrimary" />
+
+                    <EditText
+                        android:id="@+id/formb_seize_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/custom_edit_text2"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:spinnerMode="dialog"
+                        android:textColorHint="#333"
+                        android:textSize="14sp"
+                        android:maxLines="1"/>
+
+
+                </LinearLayout>
+                //for time
+
+                <LinearLayout
+                    android:id="@+id/input_time_seize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/formb_time_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Time"
+                        android:textColor="@color/colorPrimary" />
+
+                    <EditText
+                        android:id="@+id/formb_seize_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/custom_edit_text2"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:spinnerMode="dialog"
+                        android:textColorHint="#333"
+                        android:textSize="14sp"
+                        android:maxLines="1"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/veh_location_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="Location"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:background="@android:color/transparent"
+                    android:editable="false"/>
+
+                <EditText
+                    android:id="@+id/formb_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_edit_text2"
+                    android:imeOptions="actionNext"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="14sp"
+                    android:editable="false"
+                    android:focusable="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/formb_expand"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Accessories "
+                    android:textSize="14sp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="8dp"/><!--
+                <com.github.aakira.expandablelayout.ExpandableLinearLayout
+                    android:id="@+id/formb_expandableLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:ael_duration="500"
+                    app:ael_expanded="false"
+                    app:ael_interpolator="fastOutSlowIn"
+                    android:orientation="vertical"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="8dp">-->
+
+                    <com.emvsc.excise.utilClasses.NonScrollListView
+                        android:id="@+id/checked_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:divider="@null">
+
+                    </com.emvsc.excise.utilClasses.NonScrollListView>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/gray"
+                        android:layout_marginTop="16dp"/>
+                    <com.emvsc.excise.utilClasses.NonScrollListView
+                        android:id="@+id/unchecked_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:divider="@null">
+
+                    </com.emvsc.excise.utilClasses.NonScrollListView>
+
+
+
+                <!--</com.github.aakira.expandablelayout.ExpandableLinearLayout>-->
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/formb_description_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="Description"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:editable="false"
+                    android:background="@android:color/transparent"/>
+
+                <EditText
+                    android:id="@+id/formb_description_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_edit_text2"
+                    android:gravity="start"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:textSize="14sp"
+                    android:maxLength="80"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="Upload Images"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Form B Front"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn1"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:src="@drawable/ic_add_a_photo_black_24dp"
+                                android:layout_centerInParent="true"/>
+
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/formb_image1_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Form B Back"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn2"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/formb_image2_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vehicle Front"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn3"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/formb_image3_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vehicle Back"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview4"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn4"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/formb_image4_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vehicle Left"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview5"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn5"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/formb_image5_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vehicle Right"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview6"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn6"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/formb_image6_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vehicle Interior"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview7"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn7"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/formb_image7_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Optional"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_edit_text2">
+
+                            <ImageView
+                                android:id="@+id/formb_imageview8"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                android:visibility="gone"/>
+
+                            <ImageView
+                                android:id="@+id/formb_attachement_btn8"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_a_photo_black_24dp" />
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/formb_image8_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_delete_forever_black_24dp"
+                                android:layout_gravity="center_horizontal" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Remove"
+                                android:textSize="12sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/holo_red_light"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="30dp">
+
+
+
+                //submit btn
+
+                <Button
+                    android:id="@+id/formb_submit_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/custom_submit_btn"
+                    android:text="Submit"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="50dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginLeft="30dp">
+
+                </Button>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+</LinearLayout>
