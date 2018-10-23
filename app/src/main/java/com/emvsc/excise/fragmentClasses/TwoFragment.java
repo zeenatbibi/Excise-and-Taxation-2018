@@ -94,13 +94,15 @@ public class TwoFragment extends Fragment {
             public void onResponse(Call<WhmSeizeInspectorVehicle> call, Response<WhmSeizeInspectorVehicle> response) {
                 final WhmSeizeInspectorVehicle whmSeizeInspectorVehicle =  response.body();
                 int success = whmSeizeInspectorVehicle.getSuccess();
-                Log.e("Success", "onResponse: "+success );
+                Log.e("Success", "tab 2: "+success );
                 if (response.isSuccessful()){
                     if (success == 1){
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 list = whmSeizeInspectorVehicle.getSeizedData();
+                                int list_size = list.size();
+
                                 CustomMessageEvent2 customMessageEvent = new CustomMessageEvent2();
                                 customMessageEvent.setTotalInspectorReports(String.valueOf(list.size()));
                                 EventBus.getDefault().post(customMessageEvent);
@@ -111,14 +113,26 @@ public class TwoFragment extends Fragment {
                             }
                         });
 
-                    }else {
+                    }else if (success == 0){
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                frame_two_no_record.setVisibility(View.GONE);
+                                frame_two_no_record.setVisibility(View.VISIBLE);
 
+                                mSwipeRefreshLayout.setRefreshing(false);
                             }
                         });
+                    }
+                    else {
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    frame_two_no_record.setVisibility(View.VISIBLE);
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+
                     }
                 }
             }

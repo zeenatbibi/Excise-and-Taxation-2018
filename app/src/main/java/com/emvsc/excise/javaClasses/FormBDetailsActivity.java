@@ -100,7 +100,7 @@ public class FormBDetailsActivity extends AppCompatActivity implements View.OnCl
         whm_seize_cat = findViewById(R.id.whm_seize_cat);
         whm_seize_cat.setText(args.get("seize_type").toString());
         whm_formno = findViewById(R.id.whm_formno);
-        whm_formno.setText("Form A "+args.getString("form_no"));
+        whm_formno.setText("Form A #"+args.getString("form_no"));
         whm_eto_approved_time = findViewById(R.id.whm_eto_approved_time);
         //whm_eto_approved_time.setText(args.get("approved_time").toString());
         whm_eto_approved_time.setText("11:02 PM");

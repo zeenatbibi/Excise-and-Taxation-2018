@@ -17,6 +17,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -25,17 +26,21 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,19 +48,15 @@ import com.awesomedialog.blennersilva.awesomedialoglibrary.AwesomeErrorDialog;
 import com.awesomedialog.blennersilva.awesomedialoglibrary.AwesomeProgressDialog;
 import com.awesomedialog.blennersilva.awesomedialoglibrary.AwesomeSuccessDialog;
 import com.awesomedialog.blennersilva.awesomedialoglibrary.interfaces.Closure;
-
 import com.emvsc.excise.R;
 import com.emvsc.excise.adapterClasses.CheckedAdapter;
 import com.emvsc.excise.adapterClasses.UncheckedAdapter;
 import com.emvsc.excise.interfaceClasses.FormbAccessoriesApi;
-import com.emvsc.excise.interfaceClasses.ModelApi;
 import com.emvsc.excise.interfaceClasses.SeizedVehicleApi;
 import com.emvsc.excise.modelClasses.FormBAccessories;
 import com.emvsc.excise.modelClasses.FormbPost;
-import com.emvsc.excise.modelClasses.Model;
 import com.emvsc.excise.utilClasses.Config;
 import com.emvsc.excise.utilClasses.NonScrollListView;
-import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -68,6 +69,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.kofigyan.stateprogressbar.StateProgressBar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -150,7 +152,15 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
     String veh_id;
     TextView formb_expand;
     UncheckedAdapter uncheckedAdapter;
-   // ExpandableLinearLayout formb_expandableLayout;
+    RelativeLayout formb_next_btn_1, formb_back_btn_1;
+    LinearLayout formb_layout1,formb_layout2;
+    //Animation
+    Animation LeftSwipe;
+    Animation RightSwipe;
+    ScrollView formb_scroll;
+
+    StateProgressBar formb_stat_progress;
+    ProgressBar formb_access_progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,6 +180,11 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
         userID = userSharedPreferences.getString(USER_ID, "No Data");
         Log.e("veh_id", veh_id );
         Log.e("userID", userID );
+        formb_access_progress = findViewById(R.id.formb_access_progress);
+        formb_stat_progress = findViewById(R.id.formb_stat_progress);
+        formb_scroll = findViewById(R.id.formb_scroll);
+        formb_layout1 = findViewById(R.id.formb_layout1);
+        formb_layout2 = findViewById(R.id.formb_layout2);
         seize_formb_no_label = findViewById(R.id.seize_formb_no_label);
         seize_formb_no = findViewById(R.id.seize_formb_no);
         seize_formb_no.addTextChangedListener(new GenericTextWatcher(seize_formb_no));
@@ -235,6 +250,10 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
         formb_image7_delete.setOnClickListener(this);
         formb_image8_delete = findViewById(R.id.formb_image8_delete);
         formb_image8_delete.setOnClickListener(this);
+        formb_next_btn_1 = findViewById(R.id.formb_next_btn_1);
+        formb_next_btn_1.setOnClickListener(this);
+        formb_back_btn_1 = findViewById(R.id.formb_back_btn_1);
+        formb_back_btn_1.setOnClickListener(this);
 
         checkedList = findViewById(R.id.checked_list);
         uncheckList = findViewById(R.id.unchecked_list);
@@ -244,10 +263,15 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
 
         mAwesomeProgressDialog = new AwesomeProgressDialog(this);
 
+        //for animcation
+        LeftSwipe = AnimationUtils.loadAnimation(this, R.anim.left_slide);
+        RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_slide);
+
         setCurentTime();
 
     }
     private void loadFormbAccessories() {
+        formb_access_progress.setVisibility(View.VISIBLE);
         HashMap<String, String> map = new HashMap<>();
         map.put("vehicle_id", veh_id);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -270,21 +294,39 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
                     Log.e("success", "onResponse: "+success );
                     Log.e("check response: ", response.body().getAccessoriesChecked().toString());
                     Log.e("uncheck response: ", response.body().getAccessoriesUnchecked().toString());
-                    List<FormBAccessories.AccessoriesChecked> checkList = response.body().getAccessoriesChecked();
-                    List<FormBAccessories.AccessoriesUnchecked> uncheck_List = response.body().getAccessoriesUnchecked();
-                    CheckedAdapter checkedAdapter = new CheckedAdapter(FormBActivity.this, checkList);
-                    checkedList.setAdapter(checkedAdapter);
-                    checkedAdapter.notifyDataSetChanged();
-                    uncheckedAdapter = new UncheckedAdapter(FormBActivity.this, uncheck_List);
-                    uncheckList.setAdapter(uncheckedAdapter);
-                    uncheckedAdapter.notifyDataSetChanged();
+                    final List<FormBAccessories.AccessoriesChecked> checkList = response.body().getAccessoriesChecked();
+                    final List<FormBAccessories.AccessoriesUnchecked> uncheck_List = response.body().getAccessoriesUnchecked();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            checkedList.setVisibility(View.VISIBLE);
+                            uncheckList.setVisibility(View.VISIBLE);
+                            CheckedAdapter checkedAdapter = new CheckedAdapter(FormBActivity.this, checkList);
+                            checkedList.setAdapter(checkedAdapter);
+                            checkedAdapter.notifyDataSetChanged();
+                            uncheckedAdapter = new UncheckedAdapter(FormBActivity.this, uncheck_List);
+                            uncheckList.setAdapter(uncheckedAdapter);
+                            uncheckedAdapter.notifyDataSetChanged();
+                            formb_access_progress.setVisibility(View.GONE);
+
+                        }
+                    });
+
                 }
 
             }
 
             @Override
-            public void onFailure(Call<FormBAccessories> call, Throwable t) {
-                Log.e("onFailure", t.toString() );
+            public void onFailure(Call<FormBAccessories> call, final Throwable t) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("onFailure", t.toString() );
+                        formb_access_progress.setVisibility(View.GONE);
+                    }
+                });
+
+
             }
         });
     }
@@ -292,8 +334,23 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         int id = view.getId();
         switch (id){
-            case R.id.formb_expand:
-               // formb_expandableLayout.toggle();
+            case R.id.formb_next_btn_1:
+                formb_stat_progress.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+
+                formb_layout1.setVisibility(View.GONE);
+                formb_layout2.setVisibility(View.VISIBLE);
+                formb_layout2.startAnimation(LeftSwipe);
+                formb_scroll.scrollTo(0,0);
+
+                break;
+
+                case R.id.formb_back_btn_1:
+                    formb_stat_progress.setCurrentStateNumber(StateProgressBar.StateNumber.ONE);
+
+                    formb_layout1.setVisibility(View.VISIBLE);
+                formb_layout2.setVisibility(View.GONE);
+                    formb_layout1.startAnimation(RightSwipe);
+                    formb_scroll.scrollTo(0,0);
                 break;
             case R.id.formb_attachement_btn1:
                 if (ContextCompat.checkSelfPermission(FormBActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)

@@ -37,9 +37,9 @@ public class DbConstants {
     public static final String SEIZE_CHASIS_NO = "chasisno";
     public static final String SEIZE_ENGINE_NO = "engineno";
     public static final String SEIZE_VEHICLE_REG_NO = "vechileregistrationno";
-    public static final String SEIZE_DATE = "datesiezeddate";
+    public static final String SEIZE_DATE = "siezeddate";
     public static final String SEIZE_TIME = "siezedtime";
-    public static final String SEIZE_MAKE_ID = "vechicle_make";
+    public static final String SEIZE_MAKE_ID = "vehicle_make";
     public static final String SEIZE_MODEL_ID = "vehicle_model";
     public static final String SEIZE_MODEL_YEAR = "vechiclemodelyear";
     public static final String SEIZE_VEHICLE_TYPE = "vehicletype";

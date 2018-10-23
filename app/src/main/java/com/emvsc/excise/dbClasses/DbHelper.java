@@ -423,6 +423,7 @@ public class DbHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     HashMap<String, String> map = new HashMap<String, String>();
+                    map.put(DbConstants.SEIZ_ID,cursor.getString(0));
                     map.put(DbConstants.SEIZE_FORM_NO,cursor.getString(1));
                     map.put(DbConstants.SEIZE_CAT_ID,cursor.getString(2));
                     map.put(DbConstants.SEIZE_DISTRICT_ID,cursor.getString(3));
@@ -770,10 +771,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
         }
     }
-    public void deleteSeizeData() {
+    public void deleteSeizeData(String id) {
         try {
             SQLiteDatabase database = this.getWritableDatabase();
-            String query = "DELETE FROM " + DbConstants.TABLE_SEIZE;
+            String query = "DELETE FROM " + DbConstants.TABLE_SEIZE + " WHERE "+DbConstants.SEIZE_ID+"='"+id+"'" ;
             database.execSQL(query);
             Log.e("Seize", "Data Deleted !");
         }catch (Exception e){

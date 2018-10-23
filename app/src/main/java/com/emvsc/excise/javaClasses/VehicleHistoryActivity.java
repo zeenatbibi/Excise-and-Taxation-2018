@@ -1,31 +1,27 @@
 package com.emvsc.excise.javaClasses;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.FileProvider;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.awesomedialog.blennersilva.awesomedialoglibrary.AwesomeErrorDialog;
+import com.awesomedialog.blennersilva.awesomedialoglibrary.interfaces.Closure;
 import com.emvsc.excise.R;
 import com.emvsc.excise.adapterClasses.VehicleHistoryAdapter;
 import com.emvsc.excise.dbClasses.DbHelper;
@@ -34,21 +30,12 @@ import com.emvsc.excise.modelClasses.SeizePostData;
 import com.emvsc.excise.modelClasses.SeizedVechile;
 import com.emvsc.excise.utilClasses.Config;
 import com.emvsc.excise.utilClasses.FileUtils;
-import com.emvsc.excise.utilClasses.IoUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +69,7 @@ import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ENGINE_CAPICITY;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ENGINE_NO;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ENGINE_TYPE;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_FORM_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ID;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE1;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE2;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE3;
@@ -112,13 +100,14 @@ public class VehicleHistoryActivity extends AppCompatActivity {
     private static final String TAG = "VehicleHistroy";
     private RecyclerView mRecyclerView;
     SeizedVechile mSeizedVechile;
-    SwipeRefreshLayout swipe;
+    //SwipeRefreshLayout swipe;
     ArrayList<HashMap<String, String>> list = new ArrayList<>();
-    List<SeizedVechile> seizeList = new ArrayList<>();
+    List<SeizedVechile> seizeHistoryList = new ArrayList<>();
     HashMap<String, RequestBody> postMap = new HashMap<>();
     RecyclerView.LayoutManager mLayoutManager;
     List<String> accessorieslist = new ArrayList<>();
     List<String> seizelist = new ArrayList<>();
+    String seizeID;
     String formNo;
     String seizeCatId;
     String seizeCatName;
@@ -130,7 +119,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
     String vehOwnerName;
     String vehOwnerCnic;
     String vehOwnerMobileNo;
-    String squadNo;
+    String squadNo = "123";
     String chasisNo;
     String engineNo;
     String vehRegNo;
@@ -168,36 +157,74 @@ public class VehicleHistoryActivity extends AppCompatActivity {
     List<MultipartBody.Part> fileslist = new ArrayList<>();
     FloatingActionButton sync_btn;
     ImageView no_record_layout;
+    VehicleHistoryAdapter vehicleHistoryAdapter;
+    RelativeLayout veh_history;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_history);
         setUI();
+
     }
 
     private void setUI() {
         //binding view
+        veh_history = findViewById(R.id.veh_history);
         mRecyclerView = findViewById(R.id.hisoty_list);
         sync_btn = findViewById(R.id.sync_btn);
+       // swipe = findViewById(R.id.swipe);
+        no_record_layout = findViewById(R.id.seize_history_img);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+      //  swipe.setRefreshing(true);
+       // swipe.setOnRefreshListener(null);
+        loadData();
         sync_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                syncData();
+                Log.e(TAG, "onClick: "+list.size() );
+
+                    if (!isNetworkAvailable()){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AwesomeErrorDialog(VehicleHistoryActivity.this)
+                                        .setTitle("No Internet Connection")
+                                        .setMessage("Please check your wifi connection")
+                                        .setColoredCircle(R.color.dialogErrorBackgroundColor)
+                                        .setDialogIconAndColor(R.drawable.ic_dialog_error, R.color.white)
+                                        .setCancelable(false)
+                                        .setButtonText("check")
+                                        .setButtonBackgroundColor(R.color.dialogErrorBackgroundColor)
+                                        .setButtonText(getString(R.string.dialog_ok_button))
+                                        .setErrorButtonClick(new Closure() {
+                                            @Override
+                                            public void exec() {
+                                                // click
+
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+
+                    }else {
+
+                            syncData();
+
+
+                    }
+
+
+
             }
         });
-        swipe = findViewById(R.id.swipe);
-        no_record_layout = findViewById(R.id.seize_history_img);
-        swipe.setRefreshing(true);
-        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-           public void onRefresh() {
-                loadData();
-           }
-        });
-        loadData();
+
     }
     private void loadData() {
-        seizeList.clear();
+        seizeHistoryList.clear();
         list = mDbHelper.getSizeData();
         if (list.size() > 0){
             Log.e(TAG, "list size: "+list.size());
@@ -205,6 +232,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
             sync_btn.setVisibility(View.VISIBLE);
             for (int i = 0; i < list.size(); i++) {
                 HashMap<String, String> map = list.get(i);
+                seizeID = map.get(SEIZE_ID);
                 formNo = map.get(SEIZE_FORM_NO);
                 seizeCatId = map.get(SEIZE_CAT_ID);
                 seizeCatName = map.get(SEIZE_CAT_NAME);
@@ -228,7 +256,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 vehicleType = map.get(SEIZE_VEHICLE_TYPE);
                 bodyBuild = map.get(SEIZE_BODY_BUILD);
                 vehicleColor = map.get(SEIZE_VEHICLE_COLOR);
-                vehicleTransmission = "mannual";
+                vehicleTransmission = map.get(SEIZE_VEHICLE_TRANSMISSION);
                 vehicleAssembely = map.get(SEIZE_VEHICLE_ASSEMBELY);
                 vehicleWheels = map.get(SEIZE_VEHICLE_WEEHLES);
                 engineType = map.get(SEIZE_ENGINE_TYPE);
@@ -247,49 +275,72 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 image6 = map.get(SEIZE_IMAGE6);
                 image7 = map.get(SEIZE_IMAGE7);
                 image8 = map.get(SEIZE_IMAGE8);
+                Log.e(TAG, "image1: "+ image1);
+                Log.e(TAG, "image2: "+ image2);
+                Log.e(TAG, "image3: "+ image3);
+                Log.e(TAG, "image4: "+ image4);
+                Log.e(TAG, "image5: "+ image5);
+                Log.e(TAG, "image6: "+ image6);
+                Log.e(TAG, "image7: "+ image7);
+                Log.e(TAG, "image8: "+ image8);
                 if (!image1.equals("empty")){
                     Log.e(TAG, "path: "+image1);
                     mUri1 = Uri.parse(image1);
+                    Log.e(TAG, "mUri1: "+ mUri1);
                     File file1 = FileUtils.getFile(VehicleHistoryActivity.this, mUri1);
+                    //File file1 = new File(mUri1.toString());
                     fileslist.add(prepareFilePart("files[]", file1));
                 } if (!image2.equals("empty")){
-                    Log.e(TAG, "path2: "+image2);
+                    Log.e(TAG, "path1: "+image2);
                     mUri2 = Uri.parse(image2);
+
                     File file2 = FileUtils.getFile(VehicleHistoryActivity.this, mUri2);
-                    fileslist.add(prepareFilePart("files[]", file2));
+                   fileslist.add(prepareFilePart("files[]", file2));
                 } if (!image3.equals("empty")){
                     Log.e(TAG, "path2: "+image3);
                     mUri3 = Uri.parse(image3);
                     File file3 = FileUtils.getFile(VehicleHistoryActivity.this, mUri3);
+                   // File file3 = new File(mUri3.toString());
+
                     fileslist.add(prepareFilePart("files[]", file3));
                 } if (!image4.equals("empty")){
                     Log.e(TAG, "path4: "+image4);
                     mUri4 = Uri.parse(image4);
                     File file4 = FileUtils.getFile(VehicleHistoryActivity.this, mUri4);
+                    //File file4 = new File(mUri4.toString());
+
                     fileslist.add(prepareFilePart("files[]", file4));
                 } if (!image5.equals("empty")){
                     Log.e(TAG, "path5: "+image5);
                     mUri5 = Uri.parse(image5);
                     File file5 = FileUtils.getFile(VehicleHistoryActivity.this, mUri5);
+                    //File file5 = new File(mUri5.toString());
+
                     fileslist.add(prepareFilePart("files[]", file5));
                 } if (!image6.equals("empty")){
                     Log.e(TAG, "path6: "+image6);
                     mUri6 = Uri.parse(image6);
                     File file6 = FileUtils.getFile(VehicleHistoryActivity.this, mUri6);
+                    //File file6 = new File(mUri6.toString());
+
                     fileslist.add(prepareFilePart("files[]", file6));
                 } if (!image7.equals("empty")){
                     Log.e(TAG, "path7: "+image7);
                     mUri7 = Uri.parse(image7);
                     File file7 = FileUtils.getFile(VehicleHistoryActivity.this, mUri7);
+                    //File file7 = new File(mUri7.toString());
+
                     fileslist.add(prepareFilePart("files[]", file7));
                 } if (!image8.equals("empty")){
                     Log.e(TAG, "path8: "+image8);
                     mUri8 = Uri.parse(image8);
                     File file8 = FileUtils.getFile(VehicleHistoryActivity.this, mUri8);
+                   // File file8 = new File(mUri8.toString());
+
                     fileslist.add(prepareFilePart("files[]", file8));
                 }
                 mSeizedVechile = new SeizedVechile(seizeDistrict, seizeCatName, formNo, seizeDate, seizeTime);
-                seizeList.add(mSeizedVechile);
+                seizeHistoryList.add(mSeizedVechile);
                 Log.e(TAG, "accessories: "+ accessories);
                 accessorieslist = convertStringToArray(accessories);
                 seizelist = convertStringToArray(seizeCatId);
@@ -305,18 +356,16 @@ public class VehicleHistoryActivity extends AppCompatActivity {
 
                 postMap.put(SEIZE_FORM_NO, createPartFromString(formNo));
                 Log.e(TAG, "formNo: "+formNo );
-                postMap.put(SEIZE_CAT_ID, createPartFromString(seizeCatId));
-                Log.e(TAG, "seizeCatId: "+seizeCatId );
                 postMap.put(SEIZE_DISTRICT_ID, createPartFromString(seizeDistrict));
                 Log.e(TAG, "seizeDistrict: "+seizeDistrict );
                 postMap.put(SEIZE_DRIVER_NAME, createPartFromString(driverName));
                 Log.e(TAG, "driverName: "+driverName );
                 postMap.put(SEIZE_DRIVER_CNIC, createPartFromString(driverCnic));
                 Log.e(TAG, "driverCnic: "+driverCnic );
-                postMap.put(SEIZE_DRIVER_MOB_NO, createPartFromString("03025571736"));//////////////////will be solved
-                Log.e(TAG, "vehDriverName: "+"03025571736" );
-                postMap.put(SEIZE_DRIVER_ADDRESS, createPartFromString("gulbhar no 3"));
-                Log.e(TAG, "vehDriverAddress: "+"gulbhar no 3" );
+                postMap.put(SEIZE_DRIVER_MOB_NO, createPartFromString(driverMobileNo));
+                Log.e(TAG, "SEIZE_DRIVER_MOB_NO: "+driverMobileNo );
+                postMap.put(SEIZE_DRIVER_ADDRESS, createPartFromString("kllk"));
+                Log.e(TAG, "vehDriverAddress: "+"kllk" );
                 postMap.put(SEIZE_VEHICLE_OWNER_NAME, createPartFromString(vehOwnerName));
                 Log.e(TAG, "vehOwnerName: "+vehOwnerName );
                 postMap.put(SEIZE_VEHICLE_OWNER_CNIC, createPartFromString(vehOwnerCnic));
@@ -324,9 +373,12 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 postMap.put(SEIZE_VEHICLE_OWNER_MOB_NO, createPartFromString(vehOwnerMobileNo));
                 Log.e(TAG, "vehOwnerMobileNo: "+vehOwnerMobileNo );
                 postMap.put(SEIZE_SQUAD_NO, createPartFromString(squadNo));
-                Log.e(TAG, "squadNo: "+squadNo );
+
+
                 postMap.put(SEIZE_CHASIS_NO, createPartFromString(chasisNo));
                 Log.e(TAG, "chasisNo: "+chasisNo );
+                postMap.put("registration_district", createPartFromString("2"));
+
                 postMap.put(SEIZE_ENGINE_NO, createPartFromString(engineNo));
                 Log.e(TAG, "engineNo: "+engineNo );
                 postMap.put(SEIZE_VEHICLE_REG_NO, createPartFromString(vehRegNo));
@@ -347,8 +399,8 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 Log.e(TAG, "bodyBuild: "+bodyBuild );
                 postMap.put(SEIZE_VEHICLE_COLOR, createPartFromString(vehicleColor));
                 Log.e(TAG, "vehicleColor: "+vehicleColor );
-                postMap.put(SEIZE_VEHICLE_TRANSMISSION, createPartFromString("auto"));//////////////////////will be solved
-                Log.e(TAG, "vehicleTransimission: "+"auto" );
+                postMap.put(SEIZE_VEHICLE_TRANSMISSION, createPartFromString(vehicleTransmission));
+                Log.e(TAG, "vehicleTransimission: "+engineNo );
                 postMap.put(SEIZE_VEHICLE_ASSEMBELY, createPartFromString(vehicleAssembely));
                 Log.e(TAG, "vehicleAssembely: "+vehicleAssembely );
                 postMap.put(SEIZE_VEHICLE_WEEHLES, createPartFromString(vehicleWheels));
@@ -363,31 +415,36 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 Log.e(TAG, "description: "+description );
                 postMap.put(SEIZE_USER_ID, createPartFromString(userId));
                 Log.e(TAG, "userId: "+userId );
-                postMap.put("auth_key", createPartFromString("5be81d-42423d-f15958-ab70d6-3662a7"));
-                Log.e(TAG, "auth_key: "+"5be81d-42423d-f15958-ab70d6-3662a7" );
-                postMap.put(SEIZE_CURRENT_LATITUDE, createPartFromString(currentLat));
+               postMap.put(SEIZE_CURRENT_LATITUDE, createPartFromString(currentLat));
                 Log.e(TAG, "currentLat: "+currentLat );
                 postMap.put(SEIZE_CURRENT_LONGITUDE, createPartFromString(currentLng));
                 Log.e(TAG, "currentLng: "+currentLng);
+
             }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    vehicleHistoryAdapter = new VehicleHistoryAdapter(VehicleHistoryActivity.this, seizeHistoryList);
+                    mRecyclerView.setAdapter(vehicleHistoryAdapter);
+                    vehicleHistoryAdapter.notifyDataSetChanged();
+                    //swipe.setRefreshing(false);
+                }
+            });
+        }else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    seizeHistoryList.clear();
+                    no_record_layout.setVisibility(View.VISIBLE);
+                    //swipe.setRefreshing(false);
+                }
+            });
         }
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                VehicleHistoryAdapter vehicleHistoryAdapter = new VehicleHistoryAdapter(seizeList);
-                mRecyclerView.setAdapter(vehicleHistoryAdapter);
-                swipe.setRefreshing(false);
-            }
-        });
+
 
     }
-
-
-
     private void syncData() {
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -404,22 +461,36 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 .build();
         SeizedVehicleApi seizedVehicleApi = retrofit.create(SeizedVehicleApi.class);
         Call<List<SeizePostData>> call = seizedVehicleApi.uploadFiles(postMap, seizeParts, accessoriesParts, fileslist);
-        Log.e(TAG, "postData: "+postMap.toString());
-        Log.e(TAG, "accessoriesData: "+accessoriesParts.toString());
-        Log.e(TAG, "fileslist: "+fileslist.toString());
-        Log.e(TAG, "seizeParts: "+seizeParts.toString());
-        Log.e(TAG, "file size: "+fileslist.size());
         call.enqueue(new Callback<List<SeizePostData>>() {
             @Override
             public void onResponse(Call<List<SeizePostData>> call, Response<List<SeizePostData>> response) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(VehicleHistoryActivity.this, "Data Sync Successfully", Toast.LENGTH_SHORT).show();
-                                mDbHelper.deleteSeizeData();
-                                loadData();
-                            }
-                        });
+                Log.e(TAG, "onResponse: "+ response);
+                Log.e(TAG, "sucess: "+ response.body().get(0).getSuccess());
+                if (response.isSuccessful()){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar snackbar = Snackbar
+                                    .make(veh_history, "Data Sync Successfully", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                            mDbHelper.deleteSeizeData(seizeID);
+                            finish();
+                            Toast.makeText(VehicleHistoryActivity.this, "Data Sync Successfully", Toast.LENGTH_SHORT).show();
+
+
+
+                        }
+                    });
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(VehicleHistoryActivity.this, "Failed to syncing data", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+
 
             }
 
@@ -464,5 +535,17 @@ public class VehicleHistoryActivity extends AppCompatActivity {
         // MultipartBody.Part is used to send also the actual file name
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
     }
+    private boolean isNetworkAvailable() {
 
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected())
+        {
+            isAvailable = true;
+
+        }
+        return isAvailable;
+    }
 }

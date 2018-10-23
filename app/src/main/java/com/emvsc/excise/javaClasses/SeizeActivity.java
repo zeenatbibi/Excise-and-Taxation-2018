@@ -121,8 +121,48 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ACCESSORIES;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_BODY_BUILD;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_CAT_ID;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_CAT_NAME;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_CHASIS_NO;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_CURRENT_LATITUDE;
 import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_CURRENT_LONGITUDE;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DATE;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DESCRIPTION;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DISTRICT_ID;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DRIVER_ADDRESS;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DRIVER_CNIC;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DRIVER_MOB_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_DRIVER_NAME;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ENGINE_CAPICITY;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ENGINE_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_ENGINE_TYPE;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_FORM_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE1;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE2;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE3;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE4;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE5;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE6;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE7;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_IMAGE8;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_MAKE_ID;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_MODEL_ID;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_MODEL_YEAR;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_SQUAD_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_TIME;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_USER_ID;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_ASSEMBELY;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_COLOR;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_MILEAGE;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_OWNER_CNIC;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_OWNER_MOB_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_OWNER_NAME;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_REG_NO;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_TRANSMISSION;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_TYPE;
+import static com.emvsc.excise.dbClasses.DbConstants.SEIZE_VEHICLE_WEEHLES;
 import static com.emvsc.excise.utilClasses.Prefences.SPECIAL_SQUAD;
 import static com.emvsc.excise.utilClasses.Prefences.USER_DISTRICT_ID;
 import static com.emvsc.excise.utilClasses.Prefences.USER_ID;
@@ -270,6 +310,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
     String chasisNo;
     String engineNo;
     String vehRegNo;
+    String vehRegDistrict;
     String currentDate;
     String currentTime;
     String make;
@@ -331,7 +372,6 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         }
         districtId = userSharedPreferences.getString(USER_DISTRICT_ID, "No Data");
         mMap.put("district_id", createPartFromString(districtId));
-        Log.e("districtId", "onCreate: "+districtId );
         if (districtId != "No Data"){
             ArrayList<HashMap<String, String>> list = mDbHelper.getSpecificDistrictData(districtId);
             for (int i = 0; i < list.size(); i++) {
@@ -409,14 +449,14 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         attachement_btn8 = findViewById(R.id.attachement_btn8);
         image8_delete = findViewById(R.id.image8_delete);
         submit_btn = findViewById(R.id.submit_btn);
-        //layouts
+        //page layouts
         seize_layout = findViewById(R.id.seize_layout);
         form1 = findViewById(R.id.form1);
         form2 = findViewById(R.id.form2);
         form3 = findViewById(R.id.form3);
         form4 = findViewById(R.id.form4);
         stateProgressBar = findViewById(R.id.your_state_progress_bar_id);
-        //text fields
+        //page 1 fields
         seize_form_no_label = findViewById(R.id.seize_form_no_label);
         seize_form_no = findViewById(R.id.seize_form_no);
         seize_cat_spinner = findViewById(R.id.seize_cat_spinner);
@@ -442,6 +482,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         vehicle_reg_district = findViewById(R.id.vehicle_reg_district);
         vehicle_reg_district_label = findViewById(R.id.vehicle_reg_district_label);
 
+        //page 2 fields
         chasis_no_label = findViewById(R.id.chasis_no_label);
         vehicle_chasis_no = findViewById(R.id.vehicle_chasis_no);
         engine_no_label = findViewById(R.id.engine_no_label);
@@ -474,10 +515,12 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         engine_capicity_et = findViewById(R.id.engine_capicity_et);
         mileage_label = findViewById(R.id.mileage_label);
         mileage_et = findViewById(R.id.mileage_et);
+        //page 3 accessories list
+        accessoriesList = findViewById(R.id.accessories_list);
+        //page 4 fields
         description_label = findViewById(R.id.description_label);
         description_et = findViewById(R.id.description_et);
         scroll = findViewById(R.id.scroll);
-        accessoriesList = findViewById(R.id.accessories_list);
         //for animcation
         LeftSwipe = AnimationUtils.loadAnimation(this, R.anim.left_slide);
         RightSwipe = AnimationUtils.loadAnimation(this, R.anim.right_slide);
@@ -496,8 +539,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         loadWeehls();
         loadEngine();
         loadRegDistricts();
-        // register onClick listeners
-
+        //text change listeners
         seize_form_no.addTextChangedListener(new GenericTextWatcher(seize_form_no));
         driver_name_et.addTextChangedListener(new GenericTextWatcher(driver_name_et));
         driver_cnic_et.addTextChangedListener(new GenericTextWatcher(driver_cnic_et));
@@ -514,8 +556,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         engine_capicity_et.addTextChangedListener(new GenericTextWatcher(engine_capicity_et));
         mileage_et.addTextChangedListener(new GenericTextWatcher(mileage_et));
         description_et.addTextChangedListener(new GenericTextWatcher(description_et));
-
-
+        //click listeners
         seize_cat_spinner.setOnClickListener(this);
         make_et.setOnClickListener(this);
         model_et.setOnClickListener(this);
@@ -1299,7 +1340,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
     }
     @NonNull
-    private MultipartBody.Part prepareFilePart(String partName, File file, Uri uri) {
+    private MultipartBody.Part prepareFilePart(String partName, File file) {
         // create RequestBody instance from file
         RequestBody requestFile =
                 RequestBody.create(MediaType.parse(FileUtils.getMimeType(file)), file
@@ -1388,14 +1429,14 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                             compressedfile1 = new Compressor(this)
                                     .setQuality(50)
                                     .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
                                     .compressToFile(file1);
                             delete(file1);
                             imageview1.setVisibility(View.VISIBLE);
                             imageview1.setImageURI(Uri.fromFile(compressedfile1));
                             image1_delete.setVisibility(View.VISIBLE);
                             attachement_btn1.setVisibility(View.GONE);
-                            part1 = prepareFilePart("files[]", compressedfile1, uri1);
+                            part1 = prepareFilePart("files[]", compressedfile1);
                             fileParts.add(part1);
 
 
@@ -1409,30 +1450,18 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO2:
                     if(uri2 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri2, 8);
-                            file2 = createImageFile();
-                            uri2 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file2);
-                            file2.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file2);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile2 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file2);
+                            delete(file2);
                             imageview2.setVisibility(View.VISIBLE);
-                            imageview2.setImageBitmap(bmp);
+                            imageview2.setImageURI(Uri.fromFile(compressedfile2));
                             image2_delete.setVisibility(View.VISIBLE);
                             attachement_btn2.setVisibility(View.GONE);
-                            part2 = prepareFilePart("files[]", file2, uri2);
+                            part2 = prepareFilePart("files[]", compressedfile2);
                             fileParts.add(part2);
 
 
@@ -1447,31 +1476,20 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO3:
                     if(uri3 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri3, 8);
-                            file3 = createImageFile();
-                            uri3 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file3);
-                            file3.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file3);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile3 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file3);
+                            delete(file3);
                             imageview3.setVisibility(View.VISIBLE);
-                            imageview3.setImageBitmap(bmp);
+                            imageview3.setImageURI(Uri.fromFile(compressedfile3));
                             image3_delete.setVisibility(View.VISIBLE);
                             attachement_btn3.setVisibility(View.GONE);
-                            part3 = prepareFilePart("files[]", file3, uri3);
+                            part3 = prepareFilePart("files[]", compressedfile3);
                             fileParts.add(part3);
+
 
 
 
@@ -1485,30 +1503,18 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO4:
                     if(uri4 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri4, 8);
-                            file4 = createImageFile();
-                            uri4 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file4);
-                            file4.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file4);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile4 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file4);
+                            delete(file4);
                             imageview4.setVisibility(View.VISIBLE);
-                            imageview4.setImageBitmap(bmp);
+                            imageview4.setImageURI(Uri.fromFile(compressedfile4));
                             image4_delete.setVisibility(View.VISIBLE);
                             attachement_btn4.setVisibility(View.GONE);
-                            part4 = prepareFilePart("files[]", file4, uri4);
+                            part4 = prepareFilePart("files[]", compressedfile4);
                             fileParts.add(part4);
 
                         } catch (IOException e) {
@@ -1521,30 +1527,18 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO5:
                     if(uri5 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri5, 8);
-                            file5 = createImageFile();
-                            uri5 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file5);
-                            file5.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file5);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile5 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file5);
+                            delete(file5);
                             imageview5.setVisibility(View.VISIBLE);
-                            imageview5.setImageBitmap(bmp);
+                            imageview5.setImageURI(Uri.fromFile(compressedfile5));
                             image5_delete.setVisibility(View.VISIBLE);
                             attachement_btn5.setVisibility(View.GONE);
-                            part5 = prepareFilePart("files[]", file5, uri5);
+                            part5 = prepareFilePart("files[]", compressedfile5);
                             fileParts.add(part5);
 
 
@@ -1558,31 +1552,20 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO6:
                     if(uri6 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri6, 8);
-                            file6 = createImageFile();
-                            uri6 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file6);
-                            file6.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file6);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile6 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file6);
+                            delete(file6);
                             imageview6.setVisibility(View.VISIBLE);
-                            imageview6.setImageBitmap(bmp);
+                            imageview6.setImageURI(Uri.fromFile(compressedfile6));
                             image6_delete.setVisibility(View.VISIBLE);
                             attachement_btn6.setVisibility(View.GONE);
-                            part6 = prepareFilePart("files[]", file6, uri6);
+                            part6 = prepareFilePart("files[]", compressedfile6);
                             fileParts.add(part6);
+
 
 
                         } catch (IOException e) {
@@ -1595,30 +1578,18 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO7:
                     if(uri7 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri7, 8);
-                            file7 = createImageFile();
-                            uri7 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file7);
-                            file7.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file7);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile7 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file7);
+                            delete(file7);
                             imageview7.setVisibility(View.VISIBLE);
-                            imageview7.setImageBitmap(bmp);
+                            imageview7.setImageURI(Uri.fromFile(compressedfile7));
                             image7_delete.setVisibility(View.VISIBLE);
                             attachement_btn7.setVisibility(View.GONE);
-                            part7 = prepareFilePart("files[]", file7, uri7);
+                            part7 = prepareFilePart("files[]", compressedfile7);
                             fileParts.add(part7);
 
                         } catch (IOException e) {
@@ -1631,30 +1602,18 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
                 case REQUEST_TAKE_PHOTO8:
                     if(uri8 != null){
-                        Bitmap bmp;
                         try {
-                            bmp = getDownsampledBitmap(uri8, 8);
-                            file8 = createImageFile();
-                            uri8 = FileProvider.getUriForFile(this,"com.emvsc.excise.fileprovider", file8);
-                            file8.createNewFile();
-
-
-//Convert bitmap to byte array
-                            Bitmap bitmap = bmp;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(file8);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
+                            compressedfile8 = new Compressor(this)
+                                    .setQuality(50)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation")
+                                    .compressToFile(file8);
+                            delete(file8);
                             imageview8.setVisibility(View.VISIBLE);
-                            imageview8.setImageBitmap(bmp);
+                            imageview8.setImageURI(Uri.fromFile(compressedfile8));
                             image8_delete.setVisibility(View.VISIBLE);
                             attachement_btn8.setVisibility(View.GONE);
-                            part8 = prepareFilePart("files[]", file8, uri8);
+                            part8 = prepareFilePart("files[]", compressedfile8);
                             fileParts.add(part8);
 
                         } catch (IOException e) {
@@ -1691,47 +1650,9 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                 Log.e(TAG, "IOException: "+e.toString() );
             }
             if(file.exists()){
-                getApplicationContext().deleteFile(file1.getName());
+                getApplicationContext().deleteFile(file.getName());
             }
         }
-    }
-
-    private Bitmap getDownsampledBitmap(Uri uri, int sampleSize) {
-        Bitmap bitmap = null;
-        try {
-            BitmapFactory.Options outDimens = getBitmapDimensions(uri);
-
-
-            bitmap = downsampleBitmap(uri, sampleSize);
-
-        } catch (Exception e) {
-            //handle the exception(s)
-        }
-
-        return bitmap;
-    }
-    private BitmapFactory.Options getBitmapDimensions(Uri uri) throws FileNotFoundException, IOException {
-        BitmapFactory.Options outDimens = new BitmapFactory.Options();
-        outDimens.inJustDecodeBounds = true; // the decoder will return null (no bitmap)
-
-        InputStream is= getContentResolver().openInputStream(uri);
-        // if Options requested only the size will be returned
-        BitmapFactory.decodeStream(is, null, outDimens);
-        is.close();
-
-        return outDimens;
-    }
-    private Bitmap downsampleBitmap(Uri uri, int sampleSize) throws FileNotFoundException, IOException {
-        Bitmap resizedBitmap;
-        BitmapFactory.Options outBitmap = new BitmapFactory.Options();
-        outBitmap.inJustDecodeBounds = false; // the decoder will return a bitmap
-        outBitmap.inSampleSize = sampleSize;
-
-        InputStream is = getContentResolver().openInputStream(uri);
-        resizedBitmap = BitmapFactory.decodeStream(is, null, outBitmap);
-        is.close();
-
-        return resizedBitmap;
     }
 
     private File createImageFile() throws IOException {
@@ -1789,7 +1710,9 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                                         @Override
                                         public void exec() {
                                             //click
+                                            deleteFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()+"/Excise_and_Taxation");
                                             finish();
+
                                         }
                                     })
                                     .show();
@@ -1817,6 +1740,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                                     @Override
                                     public void exec() {
                                         // click
+
                                     }
                                 })
                                 .show();
@@ -1829,10 +1753,23 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
+    public static void deleteFiles(String path) {
+
+        File file = new File(path);
+
+        if (file.exists()) {
+            String deleteCmd = "rm -r " + path;
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec(deleteCmd);
+            } catch (IOException e) { }
+        }
+    }
     private void FormTwoValidation() {
         chasisNo = vehicle_chasis_no.getText().toString();
         engineNo = vehicle_engine_no.getText().toString();
         vehRegNo = vehicle_reg_no.getText().toString();
+        vehRegDistrict = vehicle_reg_district.getText().toString();
         currentDate = seize_date.getText().toString();
         currentTime = seize_time.getText().toString();
         make = make_et.getText().toString();
@@ -1859,12 +1796,27 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
             engine_no_label.setTextColor(getResources().getColor(android.R.color.holo_red_light));
             vehicle_engine_no.setBackground(getResources().getDrawable(R.drawable.error_layout2));
 
+        }else if (TextUtils.isEmpty(vehRegNo)){
+            vehicle_reg_label.setError(null);
+            vehicle_reg_label.requestFocus();
+            vehicle_reg_label.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+            vehicle_reg_no.setBackground(getResources().getDrawable(R.drawable.error_layout2));
+
+        }else if (TextUtils.isEmpty(vehRegDistrict)){
+            vehicle_reg_district_label.setError(null);
+            vehicle_reg_district_label.requestFocus();
+            vehicle_reg_district_label.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+            vehicle_reg_district.setBackground(getResources().getDrawable(R.drawable.error_layout2));
+            Snackbar snackbar = Snackbar
+                    .make(seize_layout, "Select Vehicle Reg District", Snackbar.LENGTH_SHORT);
+            snackbar.show();
+
         }else if (TextUtils.isEmpty(make)){
             make_label.requestFocus();
             make_et.setBackground(getResources().getDrawable(R.drawable.error_layout));
             make_label.setTextColor(getResources().getColor(android.R.color.holo_red_light));
             Snackbar snackbar = Snackbar
-                    .make(seize_layout, "SelectSelect Make", Snackbar.LENGTH_SHORT);
+                    .make(seize_layout, "Select Make", Snackbar.LENGTH_SHORT);
             snackbar.show();
         }else if (TextUtils.isEmpty(model)){
             model_label.requestFocus();
@@ -2063,7 +2015,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                       // saveDataLocaly();
+                       saveDataLocaly();
                         new AwesomeErrorDialog(SeizeActivity.this)
                                 .setTitle("No Internet Connection")
                                 .setMessage("Form will be sent later")
@@ -2108,7 +2060,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                 Log.e("ownerCnic", "onCreate: "+ownerCnic );
 
                 mMap.put("vechileownermobileno",createPartFromString(ownerMobileNo));
-                Log.e("shahzaib", "onCreate: "+districtId );
+                Log.e("ownerMobileNo", "onCreate: "+ownerMobileNo );
 
                 mMap.put("vechileregistrationno", createPartFromString(vehRegNo));
                 Log.e("vehRegNo", "onCreate: "+vehRegNo );
@@ -2193,89 +2145,95 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
     }
     private void saveDataLocaly() {
-        map.put("formserialno", formNo);
-        map.put("vehicleseize_category", convertArrayToString(idList));
-        map.put("vehicleseize_cat_name", convertArrayToString(nameList));
-        map.put("district_id", districtId);
-        map.put("drivername", driverName);
-        map.put("drivercnicno", driverCnic);
-        map.put("drivermobileno", driverMobile);
-        map.put("driveraddress", driverAddress);
-        map.put("vechileownername", ownerName);
-        map.put("vechileownercnic",ownerCnic);
-        map.put("vechileownermobileno",ownerMobileNo);
-        map.put("mobilesquadno", ownerSquadNo);
-        map.put("chasisno", chasisNo);
-        map.put("engineno", engineNo);
-        map.put("vechileregistrationno", vehRegNo);
-        map.put("siezeddate", currentDate);
-        map.put("siezedtime", currentTime);
-        map.put("vechiclemodelyear", modelYearId);
-        map.put("vehicle_model", modelId);
-        map.put("vechicle_make", makeId);
-        map.put("vehicletype", vehicletypeName);
-        map.put("vehicleengine_capcaity", engineCapicity);
-        map.put("mileage", mileage);
-        map.put("enginetype", engineTypeName);
-        map.put("vechilewheels", wheelsId);
-        map.put("build_id", bodyBuildId);
-        map.put("color_id", colorId);
-        map.put("transmission", transName);
-        map.put("assembely", assembId);
-        map.put("vechicledescription", description);
-        map.put("user_id", userID);
-        map.put("seizeAccessories", convertArrayToString(list));
 
-        if (uri1 != null){
-            map.put("image1", uri1.toString());
+        map.put(SEIZE_FORM_NO, formNo);
+        map.put(SEIZE_CAT_ID, convertArrayToString(idList));
+        map.put(SEIZE_CAT_NAME, convertArrayToString(nameList));
+        map.put(SEIZE_DISTRICT_ID, districtId);
+        map.put(SEIZE_DRIVER_NAME, driverName);
+        map.put(SEIZE_DRIVER_CNIC, driverCnic);
+        map.put(SEIZE_DRIVER_MOB_NO, driverMobile);
+        map.put(SEIZE_DRIVER_ADDRESS, driverAddress);
+        map.put(SEIZE_VEHICLE_OWNER_NAME, ownerName);
+        map.put(SEIZE_VEHICLE_OWNER_CNIC, ownerCnic);
+        map.put(SEIZE_VEHICLE_OWNER_MOB_NO, ownerMobileNo);
+        map.put(SEIZE_SQUAD_NO, ownerSquadNo);
+
+
+        map.put(SEIZE_CHASIS_NO, chasisNo);
+        map.put(SEIZE_ENGINE_NO, engineNo);
+        map.put(SEIZE_VEHICLE_REG_NO, vehRegNo);
+        map.put(SEIZE_DATE, currentDate);
+        map.put(SEIZE_TIME, currentTime);
+        map.put(SEIZE_MODEL_YEAR, modelYearId);
+        map.put(SEIZE_MODEL_ID, modelId);
+        map.put(SEIZE_MAKE_ID, makeId);
+        map.put(SEIZE_VEHICLE_TYPE, vehicletypeName);
+        map.put(SEIZE_ENGINE_CAPICITY, engineCapicity);
+        map.put(SEIZE_VEHICLE_MILEAGE, mileage);
+        map.put(SEIZE_ENGINE_TYPE, engineTypeName);
+        map.put(SEIZE_VEHICLE_WEEHLES, wheelsId);
+        map.put(SEIZE_BODY_BUILD, bodyBuildId);
+        map.put(SEIZE_VEHICLE_COLOR, colorId);
+        map.put(SEIZE_VEHICLE_TRANSMISSION, transName);
+        map.put(SEIZE_VEHICLE_ASSEMBELY, assembId);
+
+
+        map.put(SEIZE_DESCRIPTION, description);
+        map.put(SEIZE_USER_ID, userID);
+        map.put(SEIZE_ACCESSORIES, convertArrayToString(list));
+
+        if (FileUtils.getUri(compressedfile1) != null){
+            map.put(SEIZE_IMAGE1, FileUtils.getUri(compressedfile1).toString());
         }else {
-            map.put("image1", "empty");
+            map.put(SEIZE_IMAGE1, "empty");
 
         }
-        if (uri2 != null){
-            map.put("image2", uri2.toString());
+        if (FileUtils.getUri(compressedfile2) != null){
+            map.put(SEIZE_IMAGE2, FileUtils.getUri(compressedfile2).toString());
         }else {
-            map.put("image2", "empty");
+            map.put(SEIZE_IMAGE2, "empty");
 
         }
-        if (uri3 != null){
-            map.put("image3", uri3.toString());
+        if (FileUtils.getUri(compressedfile3) != null){
+            map.put(SEIZE_IMAGE3, FileUtils.getUri(compressedfile3).toString());
         }else {
-            map.put("image3", "empty");
+            map.put(SEIZE_IMAGE3, "empty");
 
         }
-        if (uri4 != null){
-            map.put("image4", uri4.toString());
+        if (FileUtils.getUri(compressedfile4) != null){
+            map.put(SEIZE_IMAGE4, FileUtils.getUri(compressedfile4).toString());
         }else {
-            map.put("image4", "empty");
+            map.put(SEIZE_IMAGE4, "empty");
 
         }
-        if (uri5 != null){
-            map.put("image5", uri5.toString());
+        if (FileUtils.getUri(compressedfile5) != null){
+            map.put(SEIZE_IMAGE5, FileUtils.getUri(compressedfile5).toString());
         }else {
-            map.put("image5", "empty");
+            map.put(SEIZE_IMAGE5, "empty");
 
         }
-        if (uri6 != null){
-            map.put("image6", uri6.toString());
+        if (FileUtils.getUri(compressedfile6) != null){
+            map.put(SEIZE_IMAGE6, FileUtils.getUri(compressedfile6).toString());
         }else {
-            map.put("image6", "empty");
+            map.put(SEIZE_IMAGE6, "empty");
 
         }
-        if (uri7 != null){
-            map.put("image7", uri7.toString());
+        if (FileUtils.getUri(compressedfile7) != null){
+            map.put(SEIZE_IMAGE7, FileUtils.getUri(compressedfile7).toString());
         }else {
-            map.put("image7", "empty");
+            map.put(SEIZE_IMAGE7, "empty");
 
         }
-        if (uri8 != null){
-            map.put("image8", uri8.toString());
+        if (FileUtils.getUri(compressedfile8) != null){
+            map.put(SEIZE_IMAGE8, FileUtils.getUri(compressedfile8).toString());
         }else {
-            map.put("image8", "empty");
+            map.put(SEIZE_IMAGE8, "empty");
 
         }
+
         mDbHelper.addSeizeVehicle(map);
-        Log.e("Data", "saveDataLocaly: "+map);
+        Log.e("Data", "saveDataLocaly: "+map.toString());
     }
     //helper methods
     public static String convertArrayToString(ArrayList<String> array){
@@ -2471,12 +2429,13 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         transmissionDilaog.dismiss();
                         vehicle_transmission_spinner.setText(""+transArrayName.get(i));
-                        Log.e("transName", transArrayName.get(i));
                         if (!transArrayName.get(i).equals("")){
                             vehicle_transmission_spinner.setBackground(getResources().getDrawable(R.drawable.custom_edit_text));
                             transmission_label.setTextColor(getResources().getColor(R.color.colorPrimary));
                             mMap.put("transmission", createPartFromString(transArrayName.get(i)));
+                            transName = transArrayName.get(i);
                             Log.e("transArrayName", transArrayName.get(i) );
+
                         }
                         else {
 
@@ -2657,6 +2616,8 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                         String modelName = arrayList.get(i).getSubmakename();
 
                         if (!modelId.equals("")){
+                            model_et.setBackground(getResources().getDrawable(R.drawable.custom_edit_text));
+                            model_label.setTextColor(getResources().getColor(R.color.colorPrimary));
                             //create part and put in hasmap
                             mMap.put("vehicle_model", createPartFromString(modelId));
                             Log.e( "modelId: ", modelId );
@@ -2821,15 +2782,15 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final Dialog makeDilaog = new Dialog(SeizeActivity.this, R.style.dialog_theme);
-                makeDilaog.setCancelable(true);
-                makeDilaog.setContentView(R.layout.reg_district_spinner_dialog);
-                TextView dialog_title = makeDilaog.findViewById(R.id.reg_district_dialog_title);
+                final Dialog RegDistrictDilaog = new Dialog(SeizeActivity.this, R.style.dialog_theme);
+                RegDistrictDilaog.setCancelable(true);
+                RegDistrictDilaog.setContentView(R.layout.spinner_dialog);
+                TextView dialog_title = RegDistrictDilaog.findViewById(R.id.dialog_title);
                 //add dynamic title to dialog
                 dialog_title.setText("Select Registration District");
-                SearchView mSearchView = makeDilaog.findViewById(R.id.reg_district_search_et);
+                SearchView mSearchView = RegDistrictDilaog.findViewById(R.id.search_et);
                 mSearchView.setVisibility(View.VISIBLE);
-                final ListView list = makeDilaog.findViewById(R.id.reg_district_list);
+                final ListView list = RegDistrictDilaog.findViewById(R.id.seize_cat_list);
                 mRegDistrictAdapter = new RegDistrictAdapter(SeizeActivity.this, regDistrictList);
                 list.setAdapter(mRegDistrictAdapter);
                 mRegDistrictAdapter.notifyDataSetChanged();
@@ -2837,7 +2798,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                 mSearchView.setIconifiedByDefault(false);
                 mSearchView.setSubmitButtonEnabled(false);
                 mSearchView.setQueryHint("Search...");
-                makeDilaog.show();
+                RegDistrictDilaog.show();
                 //add text watcher on search edit text
                 mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
@@ -2865,7 +2826,7 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        makeDilaog.dismiss();
+                        RegDistrictDilaog.dismiss();
 
                         regDistrictList = mRegDistrictAdapter.getList();
                         vehicle_reg_district.setText(""+regDistrictList.get(i).getRegistrationdistrictname());
@@ -2892,7 +2853,8 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
-    }    private void showDistrictDialog() {
+    }
+    private void showDistrictDialog() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2945,12 +2907,10 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                         ArrayList<DistrictData> arrayList = districtAdapter.getList();
                         seize_district_spinner.setText(""+arrayList.get(i).getDistrictname());
                         districtId = arrayList.get(i).getDistrictid();
-                        String districtName = arrayList.get(i).getDistrictname();
 
                         if (!districtId.equals("")){
                             //create part and put in hasmap
-                            /*mMap.put("district_id", createPartFromString(districtId));*/
-                            Log.e("districtId: ",  districtId);
+                            mMap.put("district_id", createPartFromString(districtId));
                         } else {
 
                         }
@@ -3280,6 +3240,12 @@ public class SeizeActivity extends AppCompatActivity implements View.OnClickList
                     if (!vehicle_engine_no.getText().toString().isEmpty()){
                         engine_no_label.setTextColor(getResources().getColor(R.color.colorPrimary));
                         vehicle_engine_no.setBackground(getResources().getDrawable(R.drawable.custom_edit_text2));
+                    }
+                    break;
+                case R.id.vehicle_reg_no:
+                    if (!vehicle_reg_no.getText().toString().isEmpty()){
+                        vehicle_reg_label.setTextColor(getResources().getColor(R.color.colorPrimary));
+                        vehicle_reg_no.setBackground(getResources().getDrawable(R.drawable.custom_edit_text2));
                     }
                     break;
             }

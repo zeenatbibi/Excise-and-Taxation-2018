@@ -113,7 +113,11 @@ public class OneFragment extends Fragment {
                         EventBus.getDefault().post(customMessageEvent);
                         seizeAprovedAdapter = new SeizeAprovedAdapter(list, new OnItemClickListener() {
                                     @Override
-                                    public void onItemClick(WhmSeizeVehicleData item) {
+                                    public void onItemClick(final WhmSeizeVehicleData item) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
                                         Log.e("OnClick", "onItemClick: "+item.getVehicleImages());
                                         Intent intent = new Intent(getActivity(), FormBDetailsActivity.class);
                                         Bundle args = new Bundle();
@@ -184,6 +188,9 @@ public class OneFragment extends Fragment {
                                         args.putSerializable("accessories_list", (Serializable) item.getVehicleAccessories());
                                         intent.putExtra("BUNDLE",args);
                                         startActivity(intent);
+
+                                            }
+                                        });
                                     }
                                 });
                                 mRecyclerView.setAdapter(seizeAprovedAdapter);
@@ -192,12 +199,23 @@ public class OneFragment extends Fragment {
                             }
                         });
 
+                    }else if (success == 0){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                frame_one_no_record.setVisibility(View.VISIBLE);
+                                mSwipeRefreshLayout.setRefreshing(false);
+
+
+                            }
+                        });
                     }
                 }else {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             frame_one_no_record.setVisibility(View.VISIBLE);
+                            mSwipeRefreshLayout.setRefreshing(false);
 
                         }
                     });
