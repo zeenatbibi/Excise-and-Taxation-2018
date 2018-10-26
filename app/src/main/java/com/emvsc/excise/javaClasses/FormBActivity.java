@@ -169,17 +169,11 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
         setUi();
         loadFormbAccessories();
     }
-
-
-
     private void setUi() {
         Intent intent = getIntent();
         veh_id = intent.getStringExtra("vehicle_id");
-        Log.e("veh_id", "setUi: "+veh_id );
         userSharedPreferences = getApplicationContext().getSharedPreferences(USER_PREF, Context.MODE_PRIVATE);
         userID = userSharedPreferences.getString(USER_ID, "No Data");
-        Log.e("veh_id", veh_id );
-        Log.e("userID", userID );
         formb_access_progress = findViewById(R.id.formb_access_progress);
         formb_stat_progress = findViewById(R.id.formb_stat_progress);
         formb_scroll = findViewById(R.id.formb_scroll);
@@ -1383,7 +1377,7 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
             currentLongitude = mLocation.getLongitude();
             dataMap.put("lat", createPartFromString(String.valueOf(currentLatitude)));
             dataMap.put("long", createPartFromString(String.valueOf(currentLongitude)));
-            displayAddress(currentLatitude, currentLongitude);
+            //displayAddress(currentLatitude, currentLongitude);
 
         } else {
         }
@@ -1465,7 +1459,7 @@ public class FormBActivity extends AppCompatActivity implements View.OnClickList
         currentLongitude = location.getLongitude();
         dataMap.put("lat", createPartFromString(String.valueOf(currentLatitude)));
         dataMap.put("long", createPartFromString(String.valueOf(currentLongitude)));
-        displayAddress(currentLatitude, currentLongitude);
+        //displayAddress(currentLatitude, currentLongitude);
     }
 
     private RequestBody createPartFromString(String val) {

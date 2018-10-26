@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awesomedialog.blennersilva.awesomedialoglibrary.AwesomeErrorDialog;
+import com.awesomedialog.blennersilva.awesomedialoglibrary.AwesomeProgressDialog;
 import com.awesomedialog.blennersilva.awesomedialoglibrary.interfaces.Closure;
 import com.emvsc.excise.R;
 import com.emvsc.excise.adapterClasses.VehicleHistoryAdapter;
@@ -159,6 +160,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
     ImageView no_record_layout;
     VehicleHistoryAdapter vehicleHistoryAdapter;
     RelativeLayout veh_history;
+    AwesomeProgressDialog mAwesomeProgressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,6 +174,8 @@ public class VehicleHistoryActivity extends AppCompatActivity {
         veh_history = findViewById(R.id.veh_history);
         mRecyclerView = findViewById(R.id.hisoty_list);
         sync_btn = findViewById(R.id.sync_btn);
+        //progress dialog
+        mAwesomeProgressDialog = new AwesomeProgressDialog(this);
        // swipe = findViewById(R.id.swipe);
         no_record_layout = findViewById(R.id.seize_history_img);
         mLayoutManager = new LinearLayoutManager(this);
@@ -184,8 +188,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "onClick: "+list.size() );
-
-                    if (!isNetworkAvailable()){
+                if (!isNetworkAvailable()){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -211,8 +214,19 @@ public class VehicleHistoryActivity extends AppCompatActivity {
 
 
                     }else {
-
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAwesomeProgressDialog.setTitle("Syncing Data")
+                                    .setMessage("Please Wait")
+                                    .setColoredCircle(R.color.colorPrimaryDark)
+                                    .setDialogIconAndColor(R.drawable.ic_dialog_info, R.color.white)
+                                    .setCancelable(false)
+                                    .show();
                             syncData();
+                        }
+                    });
+
 
 
                     }
@@ -437,14 +451,11 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 public void run() {
                     seizeHistoryList.clear();
                     no_record_layout.setVisibility(View.VISIBLE);
-                    //swipe.setRefreshing(false);
+                    vehicleHistoryAdapter.notifyDataSetChanged();
                 }
             });
         }
-
-
-
-    }
+        }
     private void syncData() {
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -470,11 +481,12 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mAwesomeProgressDialog.hide();
                             Snackbar snackbar = Snackbar
                                     .make(veh_history, "Data Sync Successfully", Snackbar.LENGTH_SHORT);
                             snackbar.show();
                             mDbHelper.deleteSeizeData(seizeID);
-                            finish();
+                            loadData();
                             Toast.makeText(VehicleHistoryActivity.this, "Data Sync Successfully", Toast.LENGTH_SHORT).show();
 
 
@@ -485,6 +497,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mAwesomeProgressDialog.hide();
                             Toast.makeText(VehicleHistoryActivity.this, "Failed to syncing data", Toast.LENGTH_SHORT).show();
 
                         }
@@ -500,6 +513,7 @@ public class VehicleHistoryActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mAwesomeProgressDialog.hide();
                         Toast.makeText(VehicleHistoryActivity.this, "Failed to syncing data", Toast.LENGTH_SHORT).show();
 
                     }
